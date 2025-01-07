@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/asset/plugin/style/style.css">
+    <!-- Google font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <!-- AdminLTE -->
+    <link href="asset/AdminLTE-3.2.0/dist/css/adminlte.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <title>Multiprotocol_IOT</title>
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+    <div class="wrapper">
+        <nav class=" main-header navbar navbar-expand-lg navbar-custom">
+            <div class="container-fluid">
+                <button class="btn btn-outline-light" id="toggleSidebar">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </nav>
+
+        <aside class="main-sidebar sidebar-dark-primary elevation-4">
+            <a href="#" class="brand-link">
+                <i class="fas fa-light fa-circle-user fa-2x" style="margin-left: 10px; margin-right: 10px; margin-bottom: 10px; margin-top: 10px;"></i>
+                <h4 class="brand-title">Multiprotocol</h4>
+                <p class="brand-desc">Communication</p>
+            </a>
+
+            <div class="sidebar">
+                <nav class="mt-2">
+                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                        <il class="nav-item">
+                            <a class="nav-link custom-nav-link active" href="#">
+                                <i class="nav-icon fas fa-home"></i>
+                                <p>Home</p>
+                            </a>
+                        </il>
+                        <il class="nav-item">
+                            <a href="#" class="nav-link custom-nav-link">
+                                <i class="nav-icon fas fa-brands fa-bluetooth"></i>
+                                <p>Bluetooth</p>
+                            </a>
+                        </il>
+                        <il class="nav-item">
+                            <a href="#" class="nav-link custom-nav-link">
+                                <i class="nav-icon fas fa-light fa-tower-cell"></i>
+                                <p>LoRa</p>
+                            </a>
+                        </il>
+                        <il class="nav-item">
+                            <a href="#" class="nav-link custom-nav-link">
+                                <i class="nav-icon fas fa-solid fa-wifi"></i>
+                                <p>WiFi</p>
+                            </a>
+                        </il>
+                        <il class="nav-item">
+                            <a href="#" class="nav-link custom-nav-link">
+                                <i class="nav-icon fas fa-solid fa-database"></i>
+                                <p>MQTT</p>
+                            </a>
+                        </il>
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+    </div>
+</body>
+<script>
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', function() {
+        // Remove 'active' class from all links
+        document.querySelectorAll('.nav-link').forEach(item => item.classList.remove('active'));
+        
+        // Add 'active' class to clicked link
+        this.classList.add('active');
+        });
+    });
+
+    document.getElementById("toggleSidebar").addEventListener("click", function () {
+        document.body.classList.toggle("sidebar-collapse");
+    });
+</script>
+</html>
