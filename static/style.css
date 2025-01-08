@@ -1,0 +1,37 @@
+.title-header{
+    font-family: "Poppins";
+    font-size: 25px;
+    font-weight: bold;
+    margin-top: 30px;
+    margin-left: 30px;
+    margin-bottom: 3px;
+}
+
+.desc-header{
+    font-family: "Poppins";
+    font-size: 20px;
+    margin-left: 30px;
+}
+
+.navbar-custom{
+    background-color: #196958;
+}
+
+.brand-title{
+    position: absolute;
+    font-family: 'Poppins';
+    font-size: 15px;
+    font-weight: bold;
+    left: 75px;
+    top: 13px;
+}
+
+.brand-desc{
+    position: absolute;
+    font-family: 'Poppins';
+    font-size: 12px;
+    font-weight: lighter;
+    left: 75px;
+    top: 32px;
+    margin-bottom: 0%;
+}
