@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- General style -->
+    <link rel="stylesheet" href="/static/style.css">
+    <!-- MQTT style -->
+    <link rel="stylesheet" href="/static/asset/pages/mqtt/mqtt.css">
+    <!-- Google font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <!-- AdminLTE -->
+    <!-- <link href="/static/asset/AdminLTE-3.2.0/dist/css/adminlte.css" rel="stylesheet"> -->
+    <link href="{{ url_for('static', filename='/asset/AdminLTE-3.2.0/dist/css/adminlte.css') }}" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <title>Multiprotocol_IOT</title>
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+    <div class="wrapper">
+        <nav class=" main-header navbar navbar-expand-lg navbar-custom">
+            <div class="container-fluid">
+                <button class="btn btn-outline-light" id="toggleSidebar">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </nav>
+
+        <aside class="main-sidebar sidebar-dark-primary elevation-4">
+            <a href="#" class="brand-link">
+                <i class="fas fa-light fa-circle-user" style="margin-left: 20px; margin-right: 10px;"></i>
+                <h4 class="brand-title">Multiprotocol</h4>
+                <p class="brand-desc">Gateway</p>
+            </a>
+
+            <div class="sidebar">
+                <nav class="mt-2">
+                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                        <il class="nav-item">
+                            <a class="nav-link custom-nav-link" href="/">
+                                <i class="nav-icon fas fa-home"></i>
+                                <p>Home</p>
+                            </a>
+                        </il>
+                        <il class="nav-item">
+                            <a class="nav-link custom-nav-link" href="/blue">
+                                <i class="nav-icon fas fa-brands fa-bluetooth"></i>
+                                <p>Bluetooth</p>
+                            </a>
+                        </il>
+                        <il class="nav-item">
+                            <a href="#" class="nav-link custom-nav-link">
+                                <i class="nav-icon fas fa-light fa-tower-cell"></i>
+                                <p>LoRa</p>
+                            </a>
+                        </il>
+                        <il class="nav-item">
+                            <a href="#" class="nav-link custom-nav-link">
+                                <i class="nav-icon fas fa-solid fa-wifi"></i>
+                                <p>WiFi</p>
+                            </a>
+                        </il>
+                        <il class="nav-item">
+                            <a href="#" class="nav-link custom-nav-link">
+                                <i class="nav-icon fas fa-solid fa-database"></i>
+                                <p>MQTT</p>
+                            </a>
+                        </il>
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+
+        <div class="content-wrapper">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-7">
+                        <h1 class="title-header">MQTT Configuration</h1>
+                        <h2 class="desc-header">Konfigurasi konektivitas MQTT</h2>
+                    </div>
+                </div>
+            </div>
+            <section class="content">
+                <div class="container-fluid">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="form-group">
+                                <div class="row mb-3 ml-3 mr-3">
+                                    <p class="label-form">MQTT Broker</p>
+                                    <input type="text" class="form-control" id="mqtt_broker" name="mqtt_broker" placeholder="Insert MQTT broker link" required>
+                                </div>
+
+                                <div class="row mb-3 ml-3 mr-3">
+                                    <p class="label-form">MQTT Topic Subscribe</p>
+                                    <input type="text" class="form-control" id="mqtt_topic_sub" name="mqtt_broker" placeholder="Insert MQTT topic subscribe" required>
+                                </div>
+
+                                <div class="row mb-3 ml-3 mr-3">
+                                    <p class="label-form">MQTT Topic Publish</p>
+                                    <input type="text" class="form-control" id="mqtt_topic_pub" name="mqtt_broker" placeholder="Insert MQTT topic publish" required>
+                                </div>
+
+                                <div class="row mb-3 ml-3">
+                                    <p class="label-form mr-3 ">MQTT Connection</p>
+                                    <p class="box-label" id="status_connect"> Not Connected</p>
+                                </div>
+
+                                <div class="row ml-3">
+                                    <button id="connect" class="col-lg-2 box-button"> Connect</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <footer class="main-footer">
+            <strong> Copyright &copy; 2025</strong>
+        </footer>
+    </div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.min.js"></script>
+<script>
+    const socket=io();
+    socket.emit('init');
+
+    socket.on('mqtt_status', function(data){
+        const state = data.status;
+        if(state){
+            document.querySelector('.box-label').style.backgroundColor = "green";
+            document.querySelector('.box-label').textContent = "Connected";
+        }else{
+            documen.querySelector('.box-label').style.backgroundColor = "red";
+            document.querySelector('.box-label').textContent = "Not Connected";
+        }
+    })
+
+    document.getElementById("connect").addEventListener("click", function(){
+        const broker = document.getElementById('mqtt_broker').value;
+        const topic_sub = document.getElementById('mqtt_topic_sub').value;
+        const topic_pub = document.getElementById('mqtt_topic_pub').value;
+
+        socket.emit('mqtt_connect', {'broker': broker, 'topic_sub': topic_sub, 'topic_pub': topic_pub});
+    });
+</script>
+<script>
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', function() {
+        // Remove 'active' class from all links
+        document.querySelectorAll('.nav-link').forEach(item => item.classList.remove('active'));
+        
+        // Add 'active' class to clicked link
+        this.classList.add('active');
+        });
+    });
+
+    document.getElementById("toggleSidebar").addEventListener("click", function () {
+        document.body.classList.toggle("sidebar-collapse");
+    });
+</script>
+</html>

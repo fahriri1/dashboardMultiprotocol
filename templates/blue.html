@@ -7,7 +7,7 @@
     <!-- Google font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <!-- AdminLTE -->
-    <link href="/asset/AdminLTE-3.2.0/dist/css/adminlte.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='/asset/AdminLTE-3.2.0/dist/css/adminlte.css') }}" rel="stylesheet">
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <title>Multiprotocol_IOT</title>
@@ -33,13 +33,13 @@
                 <nav class="mt-2">
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                         <il class="nav-item">
-                            <a class="nav-link custom-nav-link" href="../../../index.html">
+                            <a class="nav-link custom-nav-link" href="/">
                                 <i class="nav-icon fas fa-home"></i>
                                 <p>Home</p>
                             </a>
                         </il>
                         <il class="nav-item">
-                            <a class="nav-link custom-nav-link" href="/asset/pages/blue/index.html">
+                            <a class="nav-link custom-nav-link" href="#">
                                 <i class="nav-icon fas fa-brands fa-bluetooth"></i>
                                 <p>Bluetooth</p>
                             </a>
@@ -57,7 +57,7 @@
                             </a>
                         </il>
                         <il class="nav-item">
-                            <a href="#" class="nav-link custom-nav-link">
+                            <a href="/mqtt" class="nav-link custom-nav-link">
                                 <i class="nav-icon fas fa-solid fa-database"></i>
                                 <p>MQTT</p>
                             </a>

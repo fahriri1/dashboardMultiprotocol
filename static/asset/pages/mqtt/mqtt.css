@@ -1,0 +1,16 @@
+.label-form{
+    font-weight: bold;
+}
+
+.box-label{
+    background-color: red;
+    border-radius: 5px;
+    color: white;
+    padding: 5px;
+}
+
+.box-button{
+    background-color: #377467;
+    border-radius: 5px;
+    color: white;
+}
