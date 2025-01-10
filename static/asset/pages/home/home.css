@@ -1,37 +1,21 @@
-.icon-logo{
-    color: white;
-    margin-left: 15px;
-    margin-right: 10px;
-}
-
-.icon-text{
-    color: white;
+.title-card{
     font-weight: bold;
 }
 
-.card-custom{
-    border-radius: 10px; 
-    margin-top: 10px; 
-    height: 150px;
-    width: 200px;
-    text-align: center;
-}
-
-.card-body-custom{
-    background-color: #377467; 
+.status-card{
+    background-color: darkgray;
+    color: white;
+    padding-left: 7px;
+    padding-right: 7px;
+    padding-top: 2px;
+    padding-bottom: 2px;
     border-radius: 10px;
-    height: 150px;
 }
 
-.row-body-custom{
-    margin-top: 10px;
-}
-
-.bar-status{
-    height: 30px;
-    width: 140px;
-    margin-top: 10px;;
-    margin-left: 10px;
-    background-color: red;
-    border-radius: 10px;
+.card-message{
+    background-color: lightgray;
+    color: white;
+    border-radius: 5px;
+    padding-left: 10px;
+    max-height: 50px;
 }
