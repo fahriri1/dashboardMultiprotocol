@@ -18,6 +18,7 @@
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
     <div class="wrapper">
+        <!-- Navbar Side -->
         <nav class=" main-header navbar navbar-expand-lg navbar-custom">
             <div class="container-fluid">
                 <button class="btn btn-outline-light" id="toggleSidebar">
@@ -75,7 +76,7 @@
                             <div class="row ml-2">
                                 <i class="fa-brands fa-bluetooth mr-1 mt-1"></i>
                                 <p class="title-card mr-4">Bluetooth</p>
-                                <p class="status-card">Not Active</p>
+                                <p class="status-card" id="ble-card">Not Active</p>
                             </div>
 
                             <div class="card-message"></div>
@@ -89,7 +90,7 @@
                             <div class="row ml-2">
                                 <i class="fa-solid fa-tower-broadcast mr-2 mt-1"></i>
                                 <p class="title-card mr-4">LoRa</p>
-                                <p class="status-card">Not Active</p>
+                                <p class="status-card" id="lora-card">Not Active</p>
                             </div>
 
                             <div class="card-message"></div>
@@ -117,7 +118,7 @@
                             <div class="row ml-2">
                                 <i class="fa-solid fa-database mr-2 mt-1"></i>
                                 <p class="title-card mr-4">MQTT</p>
-                                <p class="status-card">Not Active</p>
+                                <p class="status-card" id="mqtt-card">Not Active</p>
                             </div>
 
                             <div class="card-message"></div>
@@ -132,6 +133,58 @@
         </footer>
     </div>
 </body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.min.js"></script>
+
+<!-- Script for lora connection -->
+<script>
+    const socket=io();
+    socket.emit('init_lora');
+
+    socket.on('lora_status', function(data){
+        const state = data.status;
+        if(state){
+            document.getElementById('lora-card').style.backgroundColor = "green";
+            document.getElementById('lora-card').textContent = "Connected";
+        }else{
+            documen.getElementById('lora-card').style.backgroundColor = "red";
+            document.getElementById('lora-card').textContent = "Not Connected";
+        }
+    })
+</script>
+
+<!-- Script for ble connection -->
+<script>
+    socket.emit('init_ble');
+
+    socket.on('ble_status', function(data){
+        const state = data.status;
+        if(state){
+            document.getElementById('ble-card').style.backgroundColor = "green";
+            document.getElementById('ble-card').textContent = "Connected";
+        }else{
+            documen.getElementById('ble-card').style.backgroundColor = "red";
+            document.getElementById('ble-card').textContent = "Not Connected";
+        }
+    })
+</script>
+
+<!-- Script for mqtt connection -->
+<script>
+    socket.emit('init');
+
+    socket.on('mqtt_status', function(data){
+        const state = data.status;
+        if(state){
+            document.getElementById('mqtt-card').style.backgroundColor = "green";
+            document.getElementById('mqtt-card').textContent = "Connected";
+        }else{
+            documen.getElementById('mqtt-card').style.backgroundColor = "red";
+            document.getElementById('mqtt-card').textContent = "Not Connected";
+        }
+    })
+</script>
+
+<!-- Script for sidebar -->
 <script>
     document.querySelectorAll('.nav-link').forEach(link => {
         link.addEventListener('click', function() {
