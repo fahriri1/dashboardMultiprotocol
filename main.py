@@ -3,6 +3,8 @@ from flask_socketio import SocketIO
 import paho.mqtt.client as mqtt
 import serial
 import time
+import asyncio
+from bleak import BleakClient
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret'
@@ -19,6 +21,19 @@ MQTT_TOPIC_PUB = ''
 serial_port_lora = "/dev/ttyAMA0"
 serial_port_ble = "/dev/ttyS0"
 baud_rate = 9600 
+
+hm10_address = "68:5E:1C:4B:DB:AF"
+write_characteristic_uuid = "0000ffe1-0000-1000-8000-00805f9b34fb"
+
+async def write_data(message):
+    async with BleakClient(hm10_address) as client:
+        print("Connected: ", client.is_connected)
+
+        data = bytearray(message, "utf-8")
+
+        await client.write_gatt_char(write_characteristic_uuid, data)
+        print("Data written successfully!")
+        socketio.emit('ble_status', {'status': True})
 
 @socketio.on('init')
 def connecting_mqtt():
@@ -51,7 +66,7 @@ def lora_init():
     
     #trying send init
     try:
-        data = "initial"
+        data = "start"
         lora.write(data.encode())  # Send data as bytes
         print(f"Sent: {data}")
     except Exception as e:
@@ -73,31 +88,10 @@ def lora_init():
 @socketio.on('init_ble')
 def ble_init():
     try:
-        ble = serial.Serial(serial_port_ble, baud_rate, timeout=1)
-        print("BLE HM-10 Initialized.")
-    except Exception as e:
-        print(f"Error: {e}")
-        exit()
-    
-    #trying send init
-    try:
-        data = "initial"
-        ble.write(data.encode())  # Send data as bytes
-        print(f"Sent: {data}")
-    except Exception as e:
-        print(f"Error sending data: {e}")
-
-    status_ble = True
-    while status_ble:
-        try:
-            if ble.in_waiting > 0:
-                received = ble.readline().decode().strip()
-                print(f"Received: {received}")
-                if received == "ready":
-                    socketio.emit('lora_status', {'status': status_ble})
-                    status_ble = False
-        except Exception as e:
-            print(f"Error receiving data: {e}")
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(write_data("start"))
+    except RuntimeError as e:
+        print(f"Error receiving data: {e}")
 
 @app.route('/')
 def home():
