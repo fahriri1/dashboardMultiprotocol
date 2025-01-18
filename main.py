@@ -8,7 +8,7 @@ from bleak import BleakClient
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret'
-socketio = SocketIO(app)
+socketio = SocketIO(app, async_mode=None)
 
 mqtt_client = mqtt.Client()
 
@@ -82,16 +82,16 @@ def lora_init():
                     socketio.emit('ble_status', {'status': status_lora})
                     status_lora = False
         except Exception as e:
-            print(f"Error receiving data: {e}")
+            print(f"Error receiving data from LoRa: {e}")
     
 
 @socketio.on('init_ble')
-def ble_init():
+async def ble_init():
     try:
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(write_data("start"))
+        print(f"Start ble intial")
+        await write_data("start")
     except RuntimeError as e:
-        print(f"Error receiving data: {e}")
+        print(f"Error receiving data from BLE: {e}")
 
 @app.route('/')
 def home():
@@ -103,4 +103,5 @@ def mqtt_():
 
 if __name__ == '__main__':
     mqtt_client.loop_start()
+    asyncio.get_event_loop()
     socketio.run(app, host='0.0.0.0', port=5000, debug=True)
