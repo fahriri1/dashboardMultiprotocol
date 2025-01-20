@@ -74,8 +74,8 @@ def lora_init():
     status_lora = True
     while status_lora:
         try:
-            print(f"Waiting for data...")
             if lora.in_waiting > 0:
+                print(f"there is something")
                 received = lora.readline().decode().strip()
                 print(f"Received: {received}")
                 if received == "ready":
