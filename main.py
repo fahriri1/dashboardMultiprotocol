@@ -73,16 +73,12 @@ def lora_init():
 
     status_lora = True
     while status_lora:
-        try:
-            if lora.in_waiting > 0:
-                print(f"there is something")
-                received = lora.readline().decode().strip()
-                print(f"Received: {received}")
-                if received == "ready":
-                    socketio.emit('ble_status', {'status': status_lora})
-                    status_lora = False
-        except Exception as e:
-            print(f"Error receiving data from LoRa: {e}")
+        if lora.in_waiting > 0:
+            received = lora.readline().decode().strip()
+            print(f"Received: {received}")
+            if received == "ready":
+                socketio.emit('ble_status', {'status': status_lora})
+                status_lora = False
     
 
 @socketio.on('init_ble')
