@@ -18,8 +18,7 @@ mqtt_client.connect(MQTT_BROKER, MQTT_PORT)
 MQTT_TOPIC_SUB = ''
 MQTT_TOPIC_PUB = ''
 
-serial_port_lora = "/dev/ttyAMA0"
-serial_port_ble = "/dev/ttyS0"
+serial_port_lora = "/dev/ttyS0"
 baud_rate = 9600 
 
 hm10_address = "68:5E:1C:4B:DB:AF"
