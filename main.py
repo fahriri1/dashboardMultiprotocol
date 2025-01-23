@@ -25,6 +25,8 @@ baud_rate = 9600
 hm10_address = "68:5E:1C:4B:DB:AF"
 write_characteristic_uuid = "0000ffe1-0000-1000-8000-00805f9b34fb"
 state_ble = False
+loop = asyncio.new_event_loop()
+asyncio.set_event_loop(loop)
 
 async def write_data(message):
     async with BleakClient(hm10_address) as client:
@@ -122,6 +124,4 @@ def wifi_():
 
 if __name__ == '__main__':
     mqtt_client.loop_start()
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
     socketio.run(app, host='0.0.0.0', port=5000, debug=True)
