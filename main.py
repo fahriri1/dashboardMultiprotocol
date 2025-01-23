@@ -34,9 +34,10 @@ async def write_data(message):
         try:
             await client.write_gatt_char(write_characteristic_uuid, data)
             print("Data written successfully!")
+            global state_ble
             state_ble = True
             socketio.emit('ble_status', {'status': state_ble})
-        except RuntimeError as e:
+        except TimeoutError as e:
             print(f"Error receiving data from BLE: {e}")
 
 def get_local_ip():
