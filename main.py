@@ -43,6 +43,18 @@ async def write_data(message):
     except TimeoutError as e:
         print(f"Timeout ble not found")
 
+async def read_data():
+    try:
+        async with BleakClient(hm10_address, timeout=1000) as client:
+            def getDataHandler(sender,data):
+                print(f"data received: {data.decode('utf-8')}")
+
+            await client.start_notify(write_characteristic_uuid, getDataHandler)
+            while(1):
+                await asyncio.sleep(1)
+    except TimeoutError as e:
+        print(f"Timeout ble not found")
+
 def get_local_ip():
     try:
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
@@ -111,6 +123,10 @@ def wifi_start():
     local_ip = get_local_ip()
     print(local_ip)
     socketio.emit('wifi_start', {'status': True, 'ip_local': local_ip})
+
+@socketio.on('ble_getData')
+def ble_getData():
+    threading.Thread(target=asyncio.run, args=(read_data(),)).start()
 
 @app.route('/')
 def home():
