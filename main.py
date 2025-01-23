@@ -100,7 +100,7 @@ def ble_init():
         socketio.emit('ble_status', {'status': state_ble})
     else:
         print(f"Start ble intial")
-        threading.Thread(target=asyncio.run, args=(write_data("start"),)).start()
+        loop.create_task(write_data("start"))
 
 @socketio.on('init_wifi')
 def wifi_start():
@@ -123,4 +123,6 @@ def wifi_():
 
 if __name__ == '__main__':
     mqtt_client.loop_start()
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
     socketio.run(app, host='0.0.0.0', port=5000, debug=True)
