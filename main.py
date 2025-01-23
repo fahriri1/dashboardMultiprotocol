@@ -6,7 +6,6 @@ import time
 import asyncio
 from bleak import BleakClient
 import socket
-import threading
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret'
@@ -100,7 +99,7 @@ def ble_init():
         socketio.emit('ble_status', {'status': state_ble})
     else:
         print(f"Start ble intial")
-        loop.create_task(write_data("start"))
+        asyncio.run_coroutine_threadsafe(write_data("start"), loop)
 
 @socketio.on('init_wifi')
 def wifi_start():
