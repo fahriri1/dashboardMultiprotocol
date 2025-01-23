@@ -172,6 +172,12 @@
             document.getElementById('ble-card').textContent = "Not Connected";
         }
     })
+
+    function startReadStreamData(){
+        socket.emit('ble_getData');
+    }
+
+    setInterval(startReadStreamData, 1000);
 </script>
 
 <!-- Script for wifi connection -->
