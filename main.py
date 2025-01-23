@@ -85,7 +85,7 @@ def lora_init():
 @socketio.on('init_ble')
 def ble_init():
     print(f"Start ble intial")
-    asyncio.run(write_data("start"))
+    asyncio.create_task(write_data("start"))
 
 def get_local_ip():
     try:
