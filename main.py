@@ -9,7 +9,7 @@ import socket
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret'
-socketio = SocketIO(app, async_mode=None)
+socketio = SocketIO(app, async_mode="asgi")
 
 mqtt_client = mqtt.Client()
 
