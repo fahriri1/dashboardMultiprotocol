@@ -6,6 +6,7 @@ import time
 import asyncio
 from bleak import BleakClient
 import socket
+import threading
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret'
@@ -25,8 +26,6 @@ baud_rate = 9600
 hm10_address = "68:5E:1C:4B:DB:AF"
 write_characteristic_uuid = "0000ffe1-0000-1000-8000-00805f9b34fb"
 state_ble = False
-loop = asyncio.new_event_loop()
-asyncio.set_event_loop(loop)
 
 async def write_data(message):
     async with BleakClient(hm10_address) as client:
@@ -101,7 +100,7 @@ def ble_init():
         socketio.emit('ble_status', {'status': state_ble})
     else:
         print(f"Start ble intial")
-        asyncio.run_coroutine_threadsafe(write_data("start"), loop)
+        threading.Thread(target=asyncio.run, args=(write_data("start"),)).start()
 
 @socketio.on('init_wifi')
 def wifi_start():
