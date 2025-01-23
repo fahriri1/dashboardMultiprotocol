@@ -43,13 +43,13 @@
                             </a>
                         </il>
                         <il class="nav-item">
-                            <a href="/wifi" class="nav-link custom-nav-link">
+                            <a href="#" class="nav-link custom-nav-link">
                                 <i class="nav-icon fas fa-solid fa-wifi"></i>
                                 <p>WiFi</p>
                             </a>
                         </il>
                         <il class="nav-item">
-                            <a href="#" class="nav-link custom-nav-link">
+                            <a href="/mqtt" class="nav-link custom-nav-link">
                                 <i class="nav-icon fas fa-solid fa-database"></i>
                                 <p>MQTT</p>
                             </a>
@@ -63,8 +63,8 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-7">
-                        <h1 class="title-header">MQTT Configuration</h1>
-                        <h2 class="desc-header">Konfigurasi konektivitas MQTT</h2>
+                        <h1 class="title-header">WiFi Configuration</h1>
+                        <h2 class="desc-header">Konfigurasi konektivitas WiFi</h2>
                     </div>
                 </div>
             </div>
@@ -73,28 +73,28 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="form-group">
-                                <div class="row mb-3 ml-3 mr-3">
-                                    <p class="label-form">MQTT Broker</p>
-                                    <input type="text" class="form-control" id="mqtt_broker" name="mqtt_broker" placeholder="Insert MQTT broker link" required>
+                                <div class="row mu-2 mb-2 ml-3 mr-3">
+                                    <p class="label-form">IP Address: <span class="link_"> 192.168.1.33:5000</span></p>
                                 </div>
 
                                 <div class="row mb-3 ml-3 mr-3">
-                                    <p class="label-form">MQTT Topic Subscribe</p>
+                                    <p class="label-form">WiFi Topic Subscribe</p>
                                     <input type="text" class="form-control" id="mqtt_topic_sub" name="mqtt_broker" placeholder="Insert MQTT topic subscribe" required>
                                 </div>
 
                                 <div class="row mb-3 ml-3 mr-3">
-                                    <p class="label-form">MQTT Topic Publish</p>
+                                    <p class="label-form">WiFi Topic Publish</p>
                                     <input type="text" class="form-control" id="mqtt_topic_pub" name="mqtt_broker" placeholder="Insert MQTT topic publish" required>
                                 </div>
 
-                                <div class="row mb-3 ml-3">
-                                    <p class="label-form mr-3 ">MQTT Connection</p>
+                                <div class="row mb-2 ml-3">
+                                    <p class="label-form mr-3 ">WiFi Connection</p>
                                     <p class="box-label" id="status_connect"> Not Connected</p>
                                 </div>
 
                                 <div class="row ml-3">
-                                    <button id="connect" class="col-lg-2 box-button"> Connect</button>
+                                    <button id="connect" class="col-lg-2 mr-5 box-button"> Connect</button>
+                                    <button id="save" class="col-lg-2 box-button"> Save</button>
                                 </div>
                             </div>
                         </div>
@@ -109,11 +109,13 @@
     </div>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.min.js"></script>
+
+<!-- Initial WiFi -->
 <script>
     const socket=io();
-    socket.emit('init');
+    socket.emit('init_wifi');
 
-    socket.on('mqtt_status', function(data){
+    socket.on('wifi_start', function(data){
         const state = data.status;
         if(state){
             document.querySelector('.box-label').style.backgroundColor = "green";
@@ -122,6 +124,9 @@
             documen.querySelector('.box-label').style.backgroundColor = "red";
             document.querySelector('.box-label').textContent = "Not Connected";
         }
+        
+        const ip_ = data.ip_local;
+        document.querySelector('.link_').textContent = ip_;
     })
 
     document.getElementById("connect").addEventListener("click", function(){

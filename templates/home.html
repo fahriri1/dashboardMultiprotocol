@@ -44,6 +44,12 @@
                             </a>
                         </il>
                         <il class="nav-item">
+                            <a href="/wifi" class="nav-link custom-nav-link">
+                                <i class="nav-icon fas fa-solid fa-wifi"></i>
+                                <p>WiFi</p>
+                            </a>
+                        </il>
+                        <il class="nav-item">
                             <a href="/mqtt" class="nav-link custom-nav-link">
                                 <i class="nav-icon fas fa-solid fa-database"></i>
                                 <p>MQTT</p>
@@ -164,6 +170,22 @@
         }else{
             documen.getElementById('ble-card').style.backgroundColor = "red";
             document.getElementById('ble-card').textContent = "Not Connected";
+        }
+    })
+</script>
+
+<!-- Script for wifi connection -->
+<script>
+    socket.emit('init_wifi');
+
+    socket.on('wifi_start', function(data){
+        const state = data.status;
+        if(state){
+            document.querySelector('.box-label').style.backgroundColor = "green";
+            document.querySelector('.box-label').textContent = "Connected";
+        }else{
+            documen.querySelector('.box-label').style.backgroundColor = "red";
+            document.querySelector('.box-label').textContent = "Not Connected";
         }
     })
 </script>

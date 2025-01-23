@@ -5,6 +5,7 @@ import serial
 import time
 import asyncio
 from bleak import BleakClient
+import socket
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret'
@@ -19,7 +20,7 @@ MQTT_TOPIC_SUB = ''
 MQTT_TOPIC_PUB = ''
 
 serial_port_lora = "/dev/ttyS0"
-baud_rate = 9600 
+baud_rate = 9600
 
 hm10_address = "68:5E:1C:4B:DB:AF"
 write_characteristic_uuid = "0000ffe1-0000-1000-8000-00805f9b34fb"
@@ -58,7 +59,7 @@ def handle_mqtt(data):
 def lora_init():
     try:
         lora = serial.Serial(serial_port_lora, baud_rate, timeout=1)
-        print("LoRa E220 Initialized.")
+        print("LoRa E220 Initialized")
     except Exception as e:
         print(f"Error: {e}")
         exit()
@@ -79,7 +80,6 @@ def lora_init():
             if received == "ready":
                 socketio.emit('ble_status', {'status': status_lora})
                 status_lora = False
-    
 
 @socketio.on('init_ble')
 async def ble_init():
@@ -89,6 +89,21 @@ async def ble_init():
     except RuntimeError as e:
         print(f"Error receiving data from BLE: {e}")
 
+def get_local_ip():
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
+            s.connect(("8.8.8.8", 80))
+            return s.getsockname()[0]
+    except Exception as e:
+        return f"Error: {e}"
+
+@socketio.on('init_wifi')
+def wifi_start():
+    print(f"WiFi started")
+    local_ip = get_local_ip()
+    print(local_ip)
+    socketio.emit('wifi_start', {'status': True, 'ip_local': local_ip})
+
 @app.route('/')
 def home():
     return render_template('home.html')
@@ -97,7 +112,12 @@ def home():
 def mqtt_():
     return render_template('mqtt.html')
 
+@app.route('/wifi')
+def wifi_():
+    return render_template('wifi.html')
+
 if __name__ == '__main__':
     mqtt_client.loop_start()
-    asyncio.get_event_loop()
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
     socketio.run(app, host='0.0.0.0', port=5000, debug=True)
