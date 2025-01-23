@@ -28,12 +28,13 @@ write_characteristic_uuid = "0000ffe1-0000-1000-8000-00805f9b34fb"
 async def write_data(message):
     async with BleakClient(hm10_address) as client:
         print("Connected: ", client.is_connected)
-
         data = bytearray(message, "utf-8")
-
-        await client.write_gatt_char(write_characteristic_uuid, data)
-        print("Data written successfully!")
-        socketio.emit('ble_status', {'status': True})
+        try:
+            await client.write_gatt_char(write_characteristic_uuid, data)
+            print("Data written successfully!")
+            socketio.emit('ble_status', {'status': True})
+        except Exception as e:
+            print(f"Error receiving data from BLE: {e}")
 
 @socketio.on('init')
 def connecting_mqtt():
@@ -82,12 +83,9 @@ def lora_init():
                 status_lora = False
 
 @socketio.on('init_ble')
-async def ble_init():
-    try:
-        print(f"Start ble intial")
-        await write_data("start")
-    except RuntimeError as e:
-        print(f"Error receiving data from BLE: {e}")
+def ble_init():
+    print(f"Start ble intial")
+    asyncio.run(write_data("start"))
 
 def get_local_ip():
     try:
@@ -118,6 +116,4 @@ def wifi_():
 
 if __name__ == '__main__':
     mqtt_client.loop_start()
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
     socketio.run(app, host='0.0.0.0', port=5000, debug=True)
