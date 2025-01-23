@@ -28,17 +28,20 @@ write_characteristic_uuid = "0000ffe1-0000-1000-8000-00805f9b34fb"
 state_ble = False
 
 async def write_data(message):
-    async with BleakClient(hm10_address) as client:
-        print("Connected: ", client.is_connected)
-        data = bytearray(message, "utf-8")
-        try:
-            await client.write_gatt_char(write_characteristic_uuid, data)
-            print("Data written successfully!")
-            global state_ble
-            state_ble = True
-            socketio.emit('ble_status', {'status': state_ble})
-        except TimeoutError as e:
-            print(f"Error receiving data from BLE: {e}")
+    try:
+        async with BleakClient(hm10_address, timeout=1000) as client:
+            print("Connected: ", client.is_connected)
+            data = bytearray(message, "utf-8")
+            try:
+                await client.write_gatt_char(write_characteristic_uuid, data)
+                print("Data written successfully!")
+                global state_ble
+                state_ble = True
+                socketio.emit('ble_status', {'status': state_ble})
+            except TimeoutError as e:
+                print(f"Error receiving data from BLE: {e}")
+    except TimeoutError as e:
+        print(f"Timeout ble not found")
 
 def get_local_ip():
     try:
