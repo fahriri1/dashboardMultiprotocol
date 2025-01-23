@@ -6,10 +6,11 @@ import time
 import asyncio
 from bleak import BleakClient
 import socket
+import threading
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret'
-socketio = SocketIO(app, async_mode="asgi")
+socketio = SocketIO(app, async_mode=None)
 
 mqtt_client = mqtt.Client()
 
@@ -85,7 +86,7 @@ def lora_init():
 @socketio.on('init_ble')
 def ble_init():
     print(f"Start ble intial")
-    asyncio.create_task(write_data("start"))
+    threading.Thread(target=asyncio.run, args=(write_data("start"),)).start()
 
 def get_local_ip():
     try:
