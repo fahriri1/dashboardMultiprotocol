@@ -25,6 +25,7 @@ baud_rate = 9600
 
 hm10_address = "68:5E:1C:4B:DB:AF"
 write_characteristic_uuid = "0000ffe1-0000-1000-8000-00805f9b34fb"
+state_ble = False
 
 async def write_data(message):
     async with BleakClient(hm10_address) as client:
@@ -33,9 +34,18 @@ async def write_data(message):
         try:
             await client.write_gatt_char(write_characteristic_uuid, data)
             print("Data written successfully!")
-            socketio.emit('ble_status', {'status': True})
-        except Exception as e:
+            state_ble = True
+            socketio.emit('ble_status', {'status': state_ble})
+        except RuntimeError as e:
             print(f"Error receiving data from BLE: {e}")
+
+def get_local_ip():
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
+            s.connect(("8.8.8.8", 80))
+            return s.getsockname()[0]
+    except Exception as e:
+        return f"Error: {e}"
 
 @socketio.on('init')
 def connecting_mqtt():
@@ -85,16 +95,11 @@ def lora_init():
 
 @socketio.on('init_ble')
 def ble_init():
-    print(f"Start ble intial")
-    threading.Thread(target=asyncio.run, args=(write_data("start"),)).start()
-
-def get_local_ip():
-    try:
-        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
-            s.connect(("8.8.8.8", 80))
-            return s.getsockname()[0]
-    except Exception as e:
-        return f"Error: {e}"
+    if state_ble:
+        socketio.emit('ble_status', {'status': state_ble})
+    else:
+        print(f"Start ble intial")
+        threading.Thread(target=asyncio.run, args=(write_data("start"),)).start()
 
 @socketio.on('init_wifi')
 def wifi_start():
