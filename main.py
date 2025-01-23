@@ -27,6 +27,15 @@ hm10_address = "68:5E:1C:4B:DB:AF"
 write_characteristic_uuid = "0000ffe1-0000-1000-8000-00805f9b34fb"
 state_ble = False
 
+loop = asyncio.new_event_loop()
+asyncio.set_event_loop(loop)
+
+def ble_event_loop():
+    asyncio.set_event_loop(loop)
+    loop.run_forever()
+
+threading.Thread(target=ble_event_loop, daemon=True).start()
+
 async def write_data(message):
     async with BleakClient(hm10_address) as client:
         print("Connected: ", client.is_connected)
@@ -100,7 +109,7 @@ def ble_init():
         socketio.emit('ble_status', {'status': state_ble})
     else:
         print(f"Start ble intial")
-        threading.Thread(target=asyncio.run, args=(write_data("start"),)).start()
+        asyncio.run_coroutine_threadsafe(write_data("start"), loop)
 
 @socketio.on('init_wifi')
 def wifi_start():
