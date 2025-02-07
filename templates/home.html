@@ -159,7 +159,7 @@
 </script>
 
 <!-- Script for ble connection -->
-<script>
+<!-- <script>
     socket.emit('init_ble');
 
     socket.on('ble_status', function(data){
@@ -173,12 +173,8 @@
         }
     })
 
-    function startReadStreamData(){
-        socket.emit('ble_getData');
-    }
-
-    setInterval(startReadStreamData, 1000);
-</script>
+    socket.emit('ble_getData');
+</script> -->
 
 <!-- Script for wifi connection -->
 <script>

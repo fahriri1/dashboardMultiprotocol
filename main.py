@@ -106,7 +106,7 @@ def lora_init():
             received = lora.readline().decode().strip()
             print(f"Received: {received}")
             if received == "ready":
-                socketio.emit('ble_status', {'status': status_lora})
+                socketio.emit('lora_status', {'status': status_lora})
                 status_lora = False
 
 @socketio.on('init_ble')
@@ -122,7 +122,7 @@ def wifi_start():
     print(f"WiFi started")
     local_ip = get_local_ip()
     print(local_ip)
-    socketio.emit('wifi_start', {'status': True, 'ip_local': local_ip})
+    socketio.emit('ip_start', {'ip_local': local_ip})
 
 @socketio.on('ble_getData')
 def ble_getData():

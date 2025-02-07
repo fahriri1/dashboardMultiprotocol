@@ -115,6 +115,11 @@
     const socket=io();
     socket.emit('init_wifi');
 
+    socket.on('ip_start', function(data){
+        const ip_ = data.ip_local;
+        document.querySelector('.link_').textContent = ip_;
+    })
+
     socket.on('wifi_start', function(data){
         const state = data.status;
         if(state){
@@ -124,9 +129,6 @@
             documen.querySelector('.box-label').style.backgroundColor = "red";
             document.querySelector('.box-label').textContent = "Not Connected";
         }
-        
-        const ip_ = data.ip_local;
-        document.querySelector('.link_').textContent = ip_;
     })
 
     document.getElementById("connect").addEventListener("click", function(){
