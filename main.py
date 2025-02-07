@@ -107,7 +107,7 @@ def lora_init():
             print(f"Received: {received}")
             if received == "ready":
                 socketio.emit('lora_status', {'status': status_lora})
-                status_lora = False
+                break
 
 @socketio.on('init_ble')
 def ble_init():
