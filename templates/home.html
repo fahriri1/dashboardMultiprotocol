@@ -146,7 +146,9 @@
     socket.emit('init_lora');
 
     let now = new Date();
-    document.getElementById('lora_status_show').innerHTML = now.toLocaleTimeString() + " Lora E220 Initialize";
+    let newText = document.createElement('p');
+    newText.textContent = now.toLocaleTimeString() + " Lora E220 Initialize";
+    document.getElementById('lora_status_show').appendChild(newText);
 
     socket.on('lora_status', function(data){
         const state = data.status;
@@ -154,7 +156,9 @@
             document.getElementById('lora-card').style.backgroundColor = "green";
             document.getElementById('lora-card').textContent = "Connected";
 
-            document.getElementById('lora_status_show').innerHTML = now.toLocaleTimeString() + " Lora connected";
+            newText = document.createElement('p');
+            newText.textContent = now.toLocaleTimeString() + " Lora connected";
+            document.getElementById('lora_status_show').appendChild(newText);
         }else{
             documen.getElementById('lora-card').style.backgroundColor = "red";
             document.getElementById('lora-card').textContent = "Not Connected";
@@ -200,7 +204,10 @@
 <script>
     socket.emit('init');
     now = new Date();
-    document.getElementById('mqtt_status_show').innerHTML = now.toLocaleTimeString() + " MQTT Initialize";
+
+    newText = document.createElement('p');
+    newText.textContent = now.toLocaleTimeString() + " MQTT Initialize";
+    document.getElementById('mqtt_status_show').appendChild(newText);
 
 
     socket.on('mqtt_status', function(data){
@@ -209,7 +216,9 @@
             document.getElementById('mqtt-card').style.backgroundColor = "green";
             document.getElementById('mqtt-card').textContent = "Connected";
 
-            document.getElementById('mqtt_status_show').innerHTML = now.toLocaleTimeString() + " MQTT connected";
+            newText = document.createElement('p');
+            newText.textContent = now.toLocaleTimeString() + " MQTT connected";
+            document.getElementById('mqtt_status_show').appendChild(newText);
         }else{
             documen.getElementById('mqtt-card').style.backgroundColor = "red";
             document.getElementById('mqtt-card').textContent = "Not Connected";
