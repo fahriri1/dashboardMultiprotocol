@@ -148,7 +148,7 @@
     let now = new Date();
     let initMessage = document.createElement('span');
     newSpan.textContent = now.toLocaleTimeString() + " Lora E220 Initialize";
-    document.getElementById('lora_status_show').appendChild(newMessage);
+    document.getElementById('lora_status_show').appendChild(initMessage);
 
     socket.on('lora_status', function(data){
         const state = data.status;
@@ -158,7 +158,7 @@
 
             let getMessage = document.createElement('span');
             newSpan.textContent = now.toLocaleTimeString() + " Lora connected";
-            document.getElementById('lora_status_show').appendChild(newMessage);
+            document.getElementById('lora_status_show').appendChild(getMessage);
         }else{
             documen.getElementById('lora-card').style.backgroundColor = "red";
             document.getElementById('lora-card').textContent = "Not Connected";
@@ -193,10 +193,6 @@
         if(state){
             document.querySelector('.box-label').style.backgroundColor = "green";
             document.querySelector('.box-label').textContent = "Connected";
-
-            let getMessage = document.createElement('span');
-            newSpan.textContent = now.toLocaleTimeString() + " MQTT connected";
-            document.getElementById('lora_status_show').appendChild(newMessage);
         }else{
             documen.querySelector('.box-label').style.backgroundColor = "red";
             document.querySelector('.box-label').textContent = "Not Connected";
@@ -210,7 +206,7 @@
     now = new Date();
     initMessage = document.createElement('span');
     newSpan.textContent = now.toLocaleTimeString() + " MQTT Initialize";
-    document.getElementById('lora_status_show').appendChild(newMessage);
+    document.getElementById('lora_status_show').appendChild(initMessage);
 
 
     socket.on('mqtt_status', function(data){
@@ -218,6 +214,10 @@
         if(state){
             document.getElementById('mqtt-card').style.backgroundColor = "green";
             document.getElementById('mqtt-card').textContent = "Connected";
+
+            let getMessage = document.createElement('span');
+            newSpan.textContent = now.toLocaleTimeString() + " MQTT connected";
+            document.getElementById('lora_status_show').appendChild(getMessage);
         }else{
             documen.getElementById('mqtt-card').style.backgroundColor = "red";
             document.getElementById('mqtt-card').textContent = "Not Connected";
