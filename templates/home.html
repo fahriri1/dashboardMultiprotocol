@@ -84,8 +84,6 @@
                                 <p class="title-card mr-4">Bluetooth</p>
                                 <p class="status-card" id="ble-card">Not Active</p>
                             </div>
-
-                            <div class="card-message"></div>
                         </div>
                     </div>
 
@@ -99,7 +97,7 @@
                                 <p class="status-card" id="lora-card">Not Active</p>
                             </div>
 
-                            <div class="card-message"></div>
+                            <div id="lora_status_show" class="card-message"></div>
                         </div>
                     </div>
 
@@ -113,7 +111,8 @@
                                 <p class="status-card">Not Active</p>
                             </div>
 
-                            <div class="card-message"></div>
+                            <div class="info-message">
+                            </div>
                         </div>
                     </div>
 
@@ -127,7 +126,7 @@
                                 <p class="status-card" id="mqtt-card">Not Active</p>
                             </div>
 
-                            <div class="card-message"></div>
+                            <div id="mqtt_status_show" class="card-message"></div>
                         </div>
                     </div>
                 </div>
@@ -146,11 +145,20 @@
     const socket=io();
     socket.emit('init_lora');
 
+    let now = new Date();
+    let initMessage = document.createElement('span');
+    newSpan.textContent = now.toLocaleTimeString() + " Lora E220 Initialize";
+    document.getElementById('lora_status_show').appendChild(newMessage);
+
     socket.on('lora_status', function(data){
         const state = data.status;
         if(state){
             document.getElementById('lora-card').style.backgroundColor = "green";
             document.getElementById('lora-card').textContent = "Connected";
+
+            let getMessage = document.createElement('span');
+            newSpan.textContent = now.toLocaleTimeString() + " Lora connected";
+            document.getElementById('lora_status_show').appendChild(newMessage);
         }else{
             documen.getElementById('lora-card').style.backgroundColor = "red";
             document.getElementById('lora-card').textContent = "Not Connected";
@@ -185,6 +193,10 @@
         if(state){
             document.querySelector('.box-label').style.backgroundColor = "green";
             document.querySelector('.box-label').textContent = "Connected";
+
+            let getMessage = document.createElement('span');
+            newSpan.textContent = now.toLocaleTimeString() + " MQTT connected";
+            document.getElementById('lora_status_show').appendChild(newMessage);
         }else{
             documen.querySelector('.box-label').style.backgroundColor = "red";
             document.querySelector('.box-label').textContent = "Not Connected";
@@ -195,6 +207,11 @@
 <!-- Script for mqtt connection -->
 <script>
     socket.emit('init');
+    now = new Date();
+    initMessage = document.createElement('span');
+    newSpan.textContent = now.toLocaleTimeString() + " MQTT Initialize";
+    document.getElementById('lora_status_show').appendChild(newMessage);
+
 
     socket.on('mqtt_status', function(data){
         const state = data.status;
