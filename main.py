@@ -1,5 +1,6 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, jsonify
 from flask_socketio import SocketIO
+from flask_cors import CORS
 import paho.mqtt.client as mqtt
 import serial
 import time
@@ -10,7 +11,12 @@ import threading
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret'
-socketio = SocketIO(app, async_mode=None)
+socketio = SocketIO(app, async_mode=None, cors_allowed_origins="*")
+CORS(app)
+
+wifi_data = 0
+lora_data = 0
+ble_data = 0
 
 mqtt_client = mqtt.Client()
 
@@ -63,6 +69,10 @@ def get_local_ip():
     except Exception as e:
         return f"Error: {e}"
 
+def PubMqtt(topic, data):
+    mqtt_client.publish(topic, data)
+    socketio.emit('mqtt_data', {'topic':topic, 'data':data})
+
 @socketio.on('init')
 def connecting_mqtt():
     if mqtt_client.is_connected():
@@ -72,16 +82,6 @@ def connecting_mqtt():
         print(f"not connected")
         state_connected = False
     socketio.emit('mqtt_status', {'status': state_connected})
-
-@socketio.on('mqtt_connect')
-def handle_mqtt(data):
-    MQTT_BROKER = data.get('broker')
-    MQTT_PORT = 1883
-    mqtt_client.connect(MQTT_BROKER, MQTT_PORT)
-
-    global MQTT_TOPIC_SUB, MQTT_TOPIC_PUB
-    MQTT_TOPIC_SUB = data.get('topic_sub')
-    MQTT_TOPIC_PUB = data.get('topic_pub')
 
 @socketio.on('init_lora')
 def lora_init():
@@ -117,12 +117,37 @@ def ble_init():
         print(f"Start ble intial")
         threading.Thread(target=asyncio.run, args=(write_data("start"),)).start()
 
-@socketio.on('init_wifi')
+@app.route('/init_wifi', methods=['POST'])
+def init_wifi():
+    data = request.json
+    print(f"device send data: {data['status']}")
+    if data['status']:
+        print(f"device connected")
+        print(f"data sent: {data['status']} and {data['ip']}")
+
+        socketio.emit('ip_device', {'status':data['status'], 'ip':data['ip']})
+        return jsonify({'connection':'connected'})
+    else:
+        print(f"device restart")
+        return jsonify({'connection':'restart'})
+
+@app.route('/dataStream_wifi', methods=['POST'])
+def dataStream_wifi():
+    global wifi_data 
+    wifi_data = request.json
+    print(f"device send data: {wifi_data['data']}")
+
+    socketio.emit('wifi_data', {'data':wifi_data['data']})
+    PubMqtt('gateway/wifi', wifi_data['data'])
+
+    return jsonify({'data sent':'sent'})
+
+@socketio.on('init_server')
 def wifi_start():
     print(f"WiFi started")
     local_ip = get_local_ip()
     print(local_ip)
-    socketio.emit('ip_start', {'ip_local': local_ip})
+    socketio.emit('ip_server', {'ip': local_ip})
 
 @socketio.on('ble_getData')
 def ble_getData():
@@ -142,4 +167,4 @@ def wifi_():
 
 if __name__ == '__main__':
     mqtt_client.loop_start()
-    socketio.run(app, host='0.0.0.0', port=5000, debug=True)
+    socketio.run(app, host='192.168.1.33', port=5000, debug=True)

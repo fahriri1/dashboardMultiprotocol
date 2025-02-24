@@ -108,10 +108,10 @@
                             <div class="row ml-2">
                                 <i class="fa-solid fa-wifi mr-2 mt-1"></i>
                                 <p class="title-card mr-4">WiFi</p>
-                                <p class="status-card">Not Active</p>
+                                <p class="status-card" id="wifi-card">Not Active</p>
                             </div>
 
-                            <div class="info-message">
+                            <div id="wifi_status_show" class="card-message"></div>
                             </div>
                         </div>
                     </div>
@@ -186,17 +186,37 @@
 
 <!-- Script for wifi connection -->
 <script>
-    socket.emit('init_wifi');
+    socket.emit('init_server');
 
-    socket.on('wifi_start', function(data){
+    newText = document.createElement('p');
+    newText.textContent = now.toLocaleTimeString() + " Server Initialize";
+    document.getElementById('wifi_status_show').appendChild(newText);
+
+    socket.on('ip_server', function(data){
+        newText = document.createElement('p');
+        newText.textContent = now.toLocaleTimeString() + " IP Server: " + data.ip;
+        document.getElementById('wifi_status_show').appendChild(newText);
+    })
+
+    socket.on('ip_device', function(data){
         const state = data.status;
         if(state){
-            document.querySelector('.box-label').style.backgroundColor = "green";
-            document.querySelector('.box-label').textContent = "Connected";
+            document.getElementById('wifi-card').style.backgroundColor = "green";
+            document.getElementById('wifi-card').textContent = "Connected";
+
+            newText = document.createElement('p');
+            newText.textContent = now.toLocaleTimeString() + " IP Device: " + data.ip;
+            document.getElementById('wifi_status_show').appendChild(newText);
         }else{
-            documen.querySelector('.box-label').style.backgroundColor = "red";
-            document.querySelector('.box-label').textContent = "Not Connected";
+            documen.getElementById('wifi-card').style.backgroundColor = "red";
+            document.getElementById('wifi-card').textContent = "Not Connected";
         }
+    })
+
+    socket.on('wifi_data', function(data){
+        newText = document.createElement('p');
+        newText.textContent = now.toLocaleTimeString() + " Device data: " + data.data;
+        document.getElementById('wifi_status_show').appendChild(newText);
     })
 </script>
 
@@ -223,6 +243,13 @@
             documen.getElementById('mqtt-card').style.backgroundColor = "red";
             document.getElementById('mqtt-card').textContent = "Not Connected";
         }
+    })
+
+    socket.on('mqtt_data', function(data){
+        newText = document.createElement('p');
+        newText.textContent = now.toLocaleTimeString() 
+        + " Topic publish: " + data.topic + " Data: " + data.data;
+        document.getElementById('mqtt_status_show').appendChild(newText);
     })
 </script>
 

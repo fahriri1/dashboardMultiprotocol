@@ -17,13 +17,14 @@
     color: white;
     border-radius: 5px;
     padding-left: 10px;
+    max-height: 200px;
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 5px
 }
 
 .info-message{
-    max-height: 200px;
     height: 200px;
     width: 100%;
     background-color: lightgray;
