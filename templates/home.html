@@ -159,10 +159,17 @@
             newText = document.createElement('p');
             newText.textContent = now.toLocaleTimeString() + " Lora connected";
             document.getElementById('lora_status_show').appendChild(newText);
+            socket.emit('start_lora');
         }else{
             documen.getElementById('lora-card').style.backgroundColor = "red";
             document.getElementById('lora-card').textContent = "Not Connected";
         }
+    })
+
+    socket.on('lora_data', function(data){
+        newText = document.createElement('p');
+        newText.textContent = now.toLocaleTimeString() + " Lora data: " + data.data;
+        document.getElementById('lora_status_show').appendChild(newText);
     })
 </script>
 

@@ -83,6 +83,25 @@ def connecting_mqtt():
         state_connected = False
     socketio.emit('mqtt_status', {'status': state_connected})
 
+@socketio.on('start_lora')
+def lora_init():
+    try:
+        lora = serial.Serial(serial_port_lora, baud_rate, timeout=1)
+        print("LoRa E220 Initialized")
+    except Exception as e:
+        print(f"Error: {e}")
+        exit()
+
+    status_lora = True
+    while status_lora:
+        if lora.in_waiting > 0:
+            received = lora.readline().decode().strip()
+            print(f"Received: {received}")
+            socketio.emit('lora_data', {'data':received})
+
+            PubMqtt('gateway/lora', received)
+
+
 @socketio.on('init_lora')
 def lora_init():
     try:
