@@ -18,7 +18,13 @@ wifi_data = 0
 lora_data = 0
 ble_data = 0
 
+wifi_test = False
+wifi_test_buffer = ['','','','','','','','','','']
+wifi_time_buffer = [0,0,0,0,0,0,0,0,0,0]
+wifi_count = 0
+
 mqtt_client = mqtt.Client()
+lastTime = 0
 
 MQTT_BROKER = 'broker.emqx.io'
 MQTT_PORT = 1883
@@ -150,16 +156,73 @@ def init_wifi():
         print(f"device restart")
         return jsonify({'connection':'restart'})
 
+@socketio.on('wifiTestOn')
+def wifiTestOn():
+    print("before rock and roll")
+    global wifi_test
+    wifi_test = True
+
 @app.route('/dataStream_wifi', methods=['POST'])
 def dataStream_wifi():
-    global wifi_data 
+    global wifi_data, wifi_test, lastTime
     wifi_data = request.json
     print(f"device send data: {wifi_data['data']}")
 
     socketio.emit('wifi_data', {'data':wifi_data['data']})
     PubMqtt('gateway/wifi', wifi_data['data'])
+    lastTime = time.time()
 
-    return jsonify({'data sent':'sent'})
+    return jsonify({'data sent':'sent', 'test':wifi_test})
+
+@app.route('/wifiTest', methods=['POST'])
+def wifiTest():
+    global wifi_count, lastTime, wifi_test
+    currentTime = time.time()
+    testDataWifi = request.json
+    wifi_test_buffer[wifi_count] = testDataWifi['data']
+    wifi_time_buffer[wifi_count] = currentTime - lastTime
+    if wifi_count == 9 :
+        latency = 0
+        througput = 0
+        packetLoss = 0
+        
+        for n in range(10):
+            print("packet: ")
+            print(wifi_test_buffer[n])
+
+            print("time: ")
+            print(wifi_time_buffer[n])
+
+            latency = latency + wifi_time_buffer[n]
+            print(f"latency: {latency}")
+
+            packetSize = len(wifi_test_buffer[n])
+            througput = througput + packetSize/wifi_time_buffer[n]
+            print(f"througput: {througput}")
+
+            if wifi_test_buffer[n] != "testingWifi":
+                packetLoss += 1
+            print(f"packetLoss: {packetLoss}")
+            print("")
+        
+        latency = latency/10
+        print(f"latency result: {latency}")
+
+        througput = througput/10
+        print(f"througput result: {througput}")
+
+        packetLoss = (packetLoss/10)*100
+        print(f"packetLoss result: {packetLoss}")
+
+        wifi_count = 0
+        wifi_test = False
+
+        socketio.emit('wifi_result', {'latency':round(latency,3), 'througput':round(througput,3), 'packetLoss':packetLoss})
+        return jsonify({'data sent':'sent'})
+    else:
+        wifi_count += 1
+        lastTime = time.time()
+        return jsonify({'data sent':'sent'})
 
 @socketio.on('init_server')
 def wifi_start():
@@ -183,6 +246,10 @@ def mqtt_():
 @app.route('/wifi')
 def wifi_():
     return render_template('wifi.html')
+
+@app.route('/test')
+def test_():
+    return render_template('testing.html')
 
 if __name__ == '__main__':
     mqtt_client.loop_start()
