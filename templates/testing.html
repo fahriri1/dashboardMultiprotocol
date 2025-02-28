@@ -122,7 +122,7 @@
                                 <div class="row mb-3 ml-3 mr-3">
                                     <div class="col-lg-3 box-test">
                                         <p class="mt-2 main-test">Latency</p>
-                                        <p class="text-test">0</p>
+                                        <p id="lat-lora" class="text-test">0</p>
                                         <p>ms (miliseconds)</p>
                                     </div>
 
@@ -131,7 +131,7 @@
 
                                     <div class="col-lg-3 box-test">
                                         <p class="mt-2 main-test">Throughput</p>
-                                        <p class="text-test">0</p>
+                                        <p id="thr-lora" class="text-test">0</p>
                                         <p>bps (byte per seconds)</p>
                                     </div>
 
@@ -140,7 +140,7 @@
 
                                     <div class="col-lg-3 box-test">
                                         <p class="mt-2 main-test">Packet Loss</p>
-                                        <p class="text-test">0</p>
+                                        <p id="pac-lora" class="text-test">0</p>
                                         <p>%</p>
                                     </div>
                                 </div>
@@ -199,6 +199,17 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.min.js"></script>
 <script>
     const socket=io();
+    document.getElementById('loraTest').addEventListener("click", function() {
+        socket.emit('test_lora');
+    });
+
+    socket.on('lora_result', function(data){
+        document.getElementById('lat-lora').textContent = data.latency;
+        document.getElementById('thr-lora').textContent = data.througput;
+        document.getElementById('pac-lora').textContent = data.packetLoss;
+    })
+</script>
+<script>
     document.getElementById('wifiTest').addEventListener("click", function() {
         socket.emit('wifiTestOn');
     });

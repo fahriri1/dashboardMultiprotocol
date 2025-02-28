@@ -19,8 +19,8 @@ lora_data = 0
 ble_data = 0
 
 wifi_test = False
-wifi_test_buffer = ['','','','','','','','','','']
-wifi_time_buffer = [0,0,0,0,0,0,0,0,0,0]
+test_buffer = ['','','','','','','','','','']
+time_buffer = [0,0,0,0,0,0,0,0,0,0]
 wifi_count = 0
 
 mqtt_client = mqtt.Client()
@@ -134,6 +134,69 @@ def lora_init():
                 socketio.emit('lora_status', {'status': status_lora})
                 break
 
+@socketio.on('test_lora')
+def lora_test():
+    try:
+        lora = serial.Serial(serial_port_lora, baud_rate, timeout=1)
+        print("LoRa E220 Initialized")
+    except Exception as e:
+        print(f"Error: {e}")
+        exit()
+    
+    #trying send init
+    try:
+        data = "test"
+        lora.write(data.encode())  # Send data as bytes
+        print(f"Sent: {data}")
+    except Exception as e:
+        print(f"Error sending data: {e}")
+
+    status_lora = True
+    iter = 0
+    lastTime = time.time()
+    while status_lora:
+        if lora.in_waiting > 0:
+            currentTime = time.time()
+            received = lora.readline().decode().strip()
+            test_buffer[iter] = received
+            time_buffer[iter] = currentTime - lastTime
+            iter += 1
+            if iter == 9 :
+                latency = 0
+                througput = 0
+                packetLoss = 0
+                
+                for n in range(10):
+                    print("packet: ")
+                    print(test_buffer[n])
+
+                    print("time: ")
+                    print(time_buffer[n])
+
+                    latency = latency + time_buffer[n]
+                    print(f"latency: {latency}")
+
+                    packetSize = len(test_buffer[n])
+                    througput = througput + packetSize/time_buffer[n]
+                    print(f"througput: {througput}")
+
+                    if test_buffer[n] != "testingLoRa":
+                        packetLoss += 1
+                    print(f"packetLoss: {packetLoss}")
+                    print("")
+                
+                latency = latency/10
+                print(f"latency result: {latency}")
+
+                througput = througput/10
+                print(f"througput result: {througput}")
+
+                packetLoss = (packetLoss/10)*100
+                print(f"packetLoss result: {packetLoss}")
+
+                socketio.emit('lora_result', {'latency':round(latency,3), 'througput':round(througput,3), 'packetLoss':packetLoss})
+                status_lora = False
+
 @socketio.on('init_ble')
 def ble_init():
     if state_ble:
@@ -179,8 +242,8 @@ def wifiTest():
     global wifi_count, lastTime, wifi_test
     currentTime = time.time()
     testDataWifi = request.json
-    wifi_test_buffer[wifi_count] = testDataWifi['data']
-    wifi_time_buffer[wifi_count] = currentTime - lastTime
+    test_buffer[wifi_count] = testDataWifi['data']
+    time_buffer[wifi_count] = currentTime - lastTime
     if wifi_count == 9 :
         latency = 0
         througput = 0
@@ -188,19 +251,19 @@ def wifiTest():
         
         for n in range(10):
             print("packet: ")
-            print(wifi_test_buffer[n])
+            print(test_buffer[n])
 
             print("time: ")
-            print(wifi_time_buffer[n])
+            print(time_buffer[n])
 
-            latency = latency + wifi_time_buffer[n]
+            latency = latency + time_buffer[n]
             print(f"latency: {latency}")
 
-            packetSize = len(wifi_test_buffer[n])
-            througput = througput + packetSize/wifi_time_buffer[n]
+            packetSize = len(test_buffer[n])
+            througput = througput + packetSize/time_buffer[n]
             print(f"througput: {througput}")
 
-            if wifi_test_buffer[n] != "testingWifi":
+            if test_buffer[n] != "testingWifi":
                 packetLoss += 1
             print(f"packetLoss: {packetLoss}")
             print("")
