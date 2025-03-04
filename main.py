@@ -161,6 +161,7 @@ def lora_test():
             test_buffer[iter] = received
             time_buffer[iter] = currentTime - lastTime
             iter += 1
+            print(f"iteration test: {iter}")
             if iter == 9 :
                 latency = 0
                 througput = 0
