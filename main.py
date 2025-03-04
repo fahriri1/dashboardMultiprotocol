@@ -160,7 +160,6 @@ def lora_test():
             received = lora.readline().decode().strip()
             test_buffer[iter] = received
             time_buffer[iter] = currentTime - lastTime
-            iter += 1
             print(f"iteration test: {iter}")
             if iter == 9 :
                 latency = 0
@@ -197,6 +196,8 @@ def lora_test():
 
                 socketio.emit('lora_result', {'latency':round(latency,3), 'througput':round(througput,3), 'packetLoss':packetLoss})
                 status_lora = False
+            else:
+                iter += 1
 
 @socketio.on('init_ble')
 def ble_init():
