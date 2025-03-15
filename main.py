@@ -60,6 +60,7 @@ async def read_data():
         async with BleakClient(hm10_address, timeout=1000) as client:
             def getDataHandler(sender,data):
                 print(f"data received: {data.decode('utf-8')}")
+                socketio.emit('ble_data', {'data': data.decode('utf-8')})
 
             await client.start_notify(write_characteristic_uuid, getDataHandler)
             while(1):

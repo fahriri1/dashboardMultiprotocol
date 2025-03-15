@@ -90,6 +90,8 @@
                                 <p class="title-card mr-4">Bluetooth</p>
                                 <p class="status-card" id="ble-card">Not Active</p>
                             </div>
+
+                            <div id="ble_status_show" class="card-message"></div>
                         </div>
                     </div>
 
@@ -183,18 +185,33 @@
 <script>
     socket.emit('init_ble');
 
+    newText = document.createElement('p');
+    newText.textContent = now.toLocaleTimeString() + " BLE Initialize";
+    document.getElementById('ble_status_show').appendChild(newText);
+
     socket.on('ble_status', function(data){
         const state = data.status;
         if(state){
             document.getElementById('ble-card').style.backgroundColor = "green";
             document.getElementById('ble-card').textContent = "Connected";
+
+            newText = document.createElement('p');
+            newText.textContent = now.toLocaleTimeString() + " BLE connected";
+            document.getElementById('ble_status_show').appendChild(newText);
+
+            socket.emit('ble_getData');
         }else{
             documen.getElementById('ble-card').style.backgroundColor = "red";
             document.getElementById('ble-card').textContent = "Not Connected";
         }
+        
+        socket.on('ble_data', function(data){
+            newText = document.createElement('p');
+            newText.textContent = now.toLocaleTimeString() + " BLE data: " + data.data;
+            document.getElementById('ble_status_show').appendChild(newText);
+        })
     })
 
-    socket.emit('ble_getData');
 </script>
 
 <!-- Script for wifi connection -->
