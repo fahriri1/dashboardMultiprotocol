@@ -204,7 +204,7 @@ def ble_init():
     if state_ble:
         socketio.emit('ble_status', {'status': state_ble})
     else:
-        print(f"Start ble intial")
+        print(f"Start BLE intial")
         socketio.start_background_task(asyncio.run, write_data("start"))
 
 @app.route('/init_wifi', methods=['POST'])
