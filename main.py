@@ -205,7 +205,7 @@ def ble_init():
         socketio.emit('ble_status', {'status': state_ble})
     else:
         print(f"Start ble intial")
-        threading.Thread(target=asyncio.run, args=(write_data("start"),)).start()
+        socketio.start_background_task(asyncio.run, write_data("start"))
 
 @app.route('/init_wifi', methods=['POST'])
 def init_wifi():
@@ -298,7 +298,7 @@ def wifi_start():
 
 @socketio.on('ble_getData')
 def ble_getData():
-    threading.Thread(target=asyncio.run, args=(read_data(),)).start()
+    socketio.start_background_task(asyncio.run, read_data())
 
 @app.route('/')
 def home():
