@@ -12,6 +12,14 @@
     border-radius: 10px;
 }
 
+.box-button{
+    background-color: #377467;
+    border-radius: 10px;
+    margin-left: 10px;
+    color: white;
+    max-height: 30px;
+}
+
 .card-message{
     background-color: lightgray;
     color: white;

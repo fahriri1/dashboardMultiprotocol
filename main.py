@@ -61,6 +61,7 @@ async def read_data():
             def getDataHandler(sender,data):
                 print(f"data received: {data.decode('utf-8')}")
                 socketio.emit('ble_data', {'data': data.decode('utf-8')})
+                PubMqtt('gateway/lora', data.decode('utf-8'))
 
             await client.start_notify(write_characteristic_uuid, getDataHandler)
             while(1):
@@ -202,11 +203,8 @@ def lora_test():
 
 @socketio.on('init_ble')
 def ble_init():
-    if state_ble:
-        socketio.emit('ble_status', {'status': state_ble})
-    else:
-        print(f"Start BLE intial")
-        socketio.start_background_task(asyncio.run, write_data("start"))
+    print(f"Start BLE intial")
+    socketio.start_background_task(asyncio.run, write_data("start"))
 
 @app.route('/init_wifi', methods=['POST'])
 def init_wifi():

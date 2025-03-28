@@ -89,6 +89,7 @@
                                 <i class="fa-brands fa-bluetooth mr-1 mt-1"></i>
                                 <p class="title-card mr-4">Bluetooth</p>
                                 <p class="status-card" id="ble-card">Not Active</p>
+                                <button id="button-ble" class="box-button">Connect Again</button>
                             </div>
 
                             <div id="ble_status_show" class="card-message"></div>
@@ -184,6 +185,9 @@
 <!-- Script for ble connection -->
 <script>
     socket.emit('init_ble');
+    document.getElementById("button-ble").addEventListener("click", function () {
+        socket.emit('init_ble');
+    });
 
     newText = document.createElement('p');
     newText.textContent = now.toLocaleTimeString() + " BLE Initialize";
