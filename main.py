@@ -203,8 +203,11 @@ def lora_test():
 
 @socketio.on('init_ble')
 def ble_init():
-    print(f"Start BLE intial")
-    socketio.start_background_task(asyncio.run, write_data("start"))
+    if state_ble:
+        socketio.emit('ble_status', {'status': state_ble})
+    else:
+        print(f"Start BLE intial")
+        socketio.start_background_task(asyncio.run, write_data("start"))
 
 @app.route('/init_wifi', methods=['POST'])
 def init_wifi():
