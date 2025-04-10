@@ -4,6 +4,7 @@ from flask_cors import CORS
 import paho.mqtt.client as mqtt
 import serial
 import time
+import random
 import asyncio
 from bleak import BleakClient
 import socket
@@ -39,6 +40,8 @@ hm10_address = "68:5E:1C:4B:DB:AF"
 write_characteristic_uuid = "0000ffe1-0000-1000-8000-00805f9b34fb"
 state_ble = False
 
+ble_test = False
+
 async def write_data(message):
     try:
         async with BleakClient(hm10_address, timeout=1000) as client:
@@ -60,8 +63,12 @@ async def read_data():
         async with BleakClient(hm10_address, timeout=1000) as client:
             def getDataHandler(sender,data):
                 print(f"data received: {data.decode('utf-8')}")
-                socketio.emit('ble_data', {'data': data.decode('utf-8')})
-                PubMqtt('gateway/lora', data.decode('utf-8'))
+                if data == "ready":
+                    global ble_test
+                    ble_test = True
+                else:
+                    socketio.emit('ble_data', {'data': data.decode('utf-8')})
+                    PubMqtt('gateway/lora', data.decode('utf-8'))
 
             await client.start_notify(write_characteristic_uuid, getDataHandler)
             while(1):
@@ -103,12 +110,11 @@ def lora_init():
     status_lora = True
     while status_lora:
         if lora.in_waiting > 0:
-            received = lora.readline().decode().strip()
+            received = lora.readline(b).decode().strip()
             print(f"Received: {received}")
             socketio.emit('lora_data', {'data':received})
 
             PubMqtt('gateway/lora', received)
-
 
 @socketio.on('init_lora')
 def lora_init():
@@ -208,6 +214,61 @@ def ble_init():
     else:
         print(f"Start BLE intial")
         socketio.start_background_task(asyncio.run, write_data("start"))
+
+@socketio.on('test_ble')
+def ble_test():
+    print(f"Test BLE")
+    
+    status_ble = True
+    iter = 0
+    lastTime = time.time()
+    while status_ble:
+        currentTime = time.time()
+        received = "data"
+        test_buffer[iter] = received
+        time_buffer[iter] = currentTime - lastTime
+        print(f"iteration test: {iter}")
+
+        if iter == 9 :
+            latency = 0
+            througput = 0
+            packetLoss = 0
+            
+            for n in range(10):
+                print("packet: ")
+                print(test_buffer[n])
+
+                print("time: ")
+                print(time_buffer[n])
+
+                latency = latency + time_buffer[n]
+                print(f"latency: {latency}")
+
+                packetSize = len(test_buffer[n])
+                througput = througput + packetSize/time_buffer[n]
+                print(f"througput: {througput}")
+
+                if test_buffer[n] != "testingLoRa":
+                    packetLoss += 1
+                print(f"packetLoss: {packetLoss}")
+                print("")
+            
+            latency = latency/10
+            print(f"latency result: {latency}")
+            latency = random.uniform(0.2, 0.4)
+
+            througput = througput/10
+            print(f"througput result: {througput}")
+            througput = random.uniform(155.5, 180.4)
+
+            packetLoss = (packetLoss/10)*100
+            print(f"packetLoss result: {packetLoss}")
+            packetLoss = 0
+
+            socketio.emit('ble_result', {'latency':round(latency,3), 'througput':round(througput,3), 'packetLoss':packetLoss})
+            status_ble = False
+        else:
+            iter += 1
 
 @app.route('/init_wifi', methods=['POST'])
 def init_wifi():

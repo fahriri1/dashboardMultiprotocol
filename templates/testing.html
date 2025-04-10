@@ -86,7 +86,7 @@
                                 <div class="row mb-3 ml-3 mr-3">
                                     <div class="col-lg-3 box-test">
                                         <p class="mt-2 main-test">Latency</p>
-                                        <p class="text-test">0</p>
+                                        <p id="lat-ble" class="text-test">0</p>
                                         <p>ms (miliseconds)</p>
                                     </div>
 
@@ -95,7 +95,7 @@
 
                                     <div class="col-lg-3 box-test">
                                         <p class="mt-2 main-test">Throughput</p>
-                                        <p class="text-test">0</p>
+                                        <p id="thr-ble" class="text-test">0</p>
                                         <p>bps (byte per seconds)</p>
                                     </div>
 
@@ -104,7 +104,7 @@
 
                                     <div class="col-lg-3 box-test">
                                         <p class="mt-2 main-test">Packet Loss</p>
-                                        <p class="text-test">0</p>
+                                        <p id="pac-ble" class="text-test">0</p>
                                         <p>%</p>
                                     </div>
                                 </div>
@@ -218,6 +218,18 @@
         document.getElementById('lat-wifi').textContent = data.latency;
         document.getElementById('thr-wifi').textContent = data.througput;
         document.getElementById('pac-wifi').textContent = data.packetLoss;
+    })
+</script>
+
+<script>
+    document.getElementById('bleTest').addEventListener("click", function() {
+        socket.emit('test_ble');
+    });
+
+    socket.on('ble_result', function(data){
+        document.getElementById('lat-ble').textContent = data.latency;
+        document.getElementById('thr-ble').textContent = data.througput;
+        document.getElementById('pac-ble').textContent = data.packetLoss;
     })
 </script>
 <script>
