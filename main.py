@@ -265,6 +265,8 @@ def ble_test():
             print(f"packetLoss result: {packetLoss}")
             packetLoss = 0
 
+            time.sleep(10)
+
             socketio.emit('ble_result', {'latency':round(latency,3), 'througput':round(througput,3), 'packetLoss':packetLoss})
             status_ble = False
         else:
