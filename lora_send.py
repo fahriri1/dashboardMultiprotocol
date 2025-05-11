@@ -1,6 +1,6 @@
 import serial
 
-serial_port_lora = "/dev/ttyS0"
+serial_port_lora = "/dev/ttyAMA0"
 baud_rate = 9600
 
 try:
